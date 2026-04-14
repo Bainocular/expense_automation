@@ -28,7 +28,16 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
 
   Map<String, dynamic>? _apiResponse;
 
-  List<String> categories = ["Meal", "Transport", "Hotel", "Business", "Other"];
+  List<String> categories = [
+    "Meal",
+    "Transport",
+    "Hotel",
+    "Business",
+    "Office expenses",
+    "Telephone expenses",
+    "Entertainment",
+    "Other",
+  ];
   String? _selectedCategory;
 
   final TextEditingController _dateController = TextEditingController();
@@ -325,21 +334,32 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
             const SizedBox(height: 20),
 
             DropdownButtonFormField<String>(
-              value: _selectedCategory,
+              // value: _selectedCategory,
+              initialValue: _categoryController.text,
               decoration: InputDecoration(
                 labelText: "Category",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              items: ["Meal", "Transport", "Hotel", "Business", "Other"]
-                  .map(
-                    (category) => DropdownMenuItem(
-                      value: category,
-                      child: Text(category),
-                    ),
-                  )
-                  .toList(),
+              items:
+                  [
+                        "Meal",
+                        "Transport",
+                        "Hotel",
+                        "Business",
+                        "Office expenses",
+                        "Telephone expenses",
+                        "Entertainment",
+                        "Other",
+                      ]
+                      .map(
+                        (category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(category),
+                        ),
+                      )
+                      .toList(),
               onChanged: _isEditing
                   ? (value) {
                       setState(() {

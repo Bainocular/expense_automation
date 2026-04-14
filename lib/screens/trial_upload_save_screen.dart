@@ -274,6 +274,8 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
       await http.MultipartFile.fromPath('files', _selectedFile!.path),
     );
 
+    print(request.files);
+
     var response = await request.send();
     var responseBody = await response.stream.bytesToString();
 
@@ -419,21 +421,32 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
             const SizedBox(height: 20),
 
             DropdownButtonFormField<String>(
-              value: _selectedCategory,
+              //value: _selectedCategory,
+              initialValue: _categoryController.text,
               decoration: InputDecoration(
                 labelText: "Category",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              items: ["Meal", "Transport", "Hotel", "Business", "Other"]
-                  .map(
-                    (category) => DropdownMenuItem(
-                      value: category,
-                      child: Text(category),
-                    ),
-                  )
-                  .toList(),
+              items:
+                  [
+                        "Meal",
+                        "Transport",
+                        "Hotel",
+                        "Business",
+                        "Office expenses",
+                        "Telephone expenses",
+                        "Entertainment",
+                        "Other",
+                      ]
+                      .map(
+                        (category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(category),
+                        ),
+                      )
+                      .toList(),
               onChanged: _isEditing
                   ? (value) {
                       setState(() {

@@ -28,7 +28,7 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
   String? _serverOtp;
 
   final String apiUrl =
-      "https://invoice-reimbursement-backend.cfapps.us10-001.hana.ondemand.com/api/v1/invoice-validation/flutter/user/login";
+      "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/authenticate-user";
 
   // Email Regex
   bool isValidEmail(String email) {
@@ -122,10 +122,22 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
                     labelText: "Select Client",
                   ),
                   items: const [
-                    DropdownMenuItem(value: "Monster Energy", child: Text("Monster Energy")),
-                    DropdownMenuItem(value: "Jacklinks", child: Text("Jacklinks")),
-                    DropdownMenuItem(value: "Luxottica", child: Text("Luxottica")),
-                    DropdownMenuItem(value: "Public Storage", child: Text("Public Storage")),
+                    DropdownMenuItem(
+                      value: "Monster Energy",
+                      child: Text("Monster Energy"),
+                    ),
+                    DropdownMenuItem(
+                      value: "Jacklinks",
+                      child: Text("Jacklinks"),
+                    ),
+                    DropdownMenuItem(
+                      value: "Luxottica",
+                      child: Text("Luxottica"),
+                    ),
+                    DropdownMenuItem(
+                      value: "Public Storage",
+                      child: Text("Public Storage"),
+                    ),
                   ],
                   onChanged: (value) {
                     dropdownValue = value;
@@ -245,7 +257,10 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
               const SizedBox(height: 40),
               const Text(
                 "Enter your email to continue",
-                style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 74, 74, 74)),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color.fromARGB(255, 74, 74, 74),
+                ),
               ),
               const SizedBox(height: 10),
 

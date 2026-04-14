@@ -32,9 +32,9 @@ class MyApp extends StatelessWidget {
       //home: LoginPage(),
       //home: OTPLoginScreen(),
       //home: TrialHomepage(),
-      //home: SplashScreen(),
+      home: SplashScreen(),
       // home: WebHomeScreen(),
-      home: HomeScreen(),
+      //home: HomeScreen(),
       //home: UploadInvoiceScreen(),
       //home: InvoiceCameraScreen(),
       // home: UploadScreen()
