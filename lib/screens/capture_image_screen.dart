@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:typed_data';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -17,7 +20,8 @@ class DocumentCaptureScreen extends StatefulWidget {
 
 class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
   CameraController? _controller;
-  List<XFile> capturedImages = [];
+  //List<XFile> capturedImages = [];
+  List<dynamic> capturedImages = [];
   bool isLastPageChecked = false;
   bool isCameraInitialized = false;
   bool _isSaving = false;
@@ -45,7 +49,9 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
   final TextEditingController _categoryController = TextEditingController();
 
   // Future<void> uploadMultipleImages(List<XFile> images) async {
-  Future<Map<String, dynamic>?> uploadMultipleImages(List<XFile> images) async {
+  Future<Map<String, dynamic>?> uploadMultipleImages(
+    List<dynamic> images,
+  ) async {
     const String apiUrl =
         "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/read-invoices";
 
@@ -53,12 +59,23 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
 
     // Add multiple files
     for (var image in images) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'files', // MUST match FastAPI parameter name
-          image.path,
-        ),
-      );
+      if (kIsWeb) {
+        //IMAGE is Uint8List
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'files',
+            image,
+            filename: 'image_${DateTime.now().millisecondsSinceEpoch}.jpg',
+          ),
+        );
+      } else {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'files', // MUST match FastAPI parameter name
+            image.path,
+          ),
+        );
+      }
     }
 
     try {
@@ -172,10 +189,18 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
     if (!_controller!.value.isInitialized) return;
 
     final image = await _controller!.takePicture();
+    //adding web hanlding along with mobile apk
 
-    setState(() {
-      capturedImages.add(image);
-    });
+    if (kIsWeb) {
+      final bytes = await image.readAsBytes();
+      setState(() {
+        capturedImages.add(bytes);
+      });
+    } else {
+      setState(() {
+        capturedImages.add(image);
+      });
+    }
   }
 
   void _submitImages() async {
@@ -386,6 +411,27 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
     );
   }
 
+  Widget _buildWebCameraUI() {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () async {
+          final pickedFile = await ImagePicker().pickImage(
+            source: ImageSource.camera,
+          );
+
+          if (pickedFile != null) {
+            final bytes = await pickedFile.readAsBytes();
+
+            setState(() {
+              capturedImages.add(bytes);
+            });
+          }
+        },
+        child: const Text("Open Camera"),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -412,7 +458,9 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
                   borderRadius: BorderRadius.circular(16),
                   color: Colors.grey.shade200,
                 ),
-                child: isCameraInitialized
+                child: kIsWeb
+                    ? _buildWebCameraUI()
+                    : isCameraInitialized
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: CameraPreview(_controller!),
@@ -447,16 +495,24 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
                     scrollDirection: Axis.horizontal,
                     itemCount: capturedImages.length,
                     itemBuilder: (context, index) {
+                      final image = capturedImages[index];
                       return Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            File(capturedImages[index].path),
-                            width: 70,
-                            height: 70,
-                            fit: BoxFit.cover,
-                          ),
+                          child: kIsWeb
+                              ? Image.memory(
+                                  image,
+                                  width: 70,
+                                  height: 70,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.file(
+                                  File(capturedImages[index].path),
+                                  width: 70,
+                                  height: 70,
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                       );
                     },

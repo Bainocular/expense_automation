@@ -214,6 +214,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
@@ -228,7 +229,9 @@ class UploadInvoiceScreen extends StatefulWidget {
 }
 
 class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
-  File? _selectedFile;
+  //File? _selectedFile;
+  Uint8List? _selectedFileBytes;
+  String? _selectedFileName;
   bool _isProcessing = false;
   bool _isSaving = false;
   bool _isEditing = false;
@@ -252,11 +255,14 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+      withData: true,
     );
 
     if (result != null) {
       setState(() {
-        _selectedFile = File(result.files.single.path!);
+        //_selectedFile = File(result.files.single.path!);
+        _selectedFileBytes = result.files.single.bytes;
+        _selectedFileName = result.files.single.name;
         _apiResponse = null;
       });
     }
@@ -264,14 +270,18 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
 
   /// PROCESS FILE (UPLOAD)
   Future<void> _processFile() async {
-    if (_selectedFile == null) return;
+    if (_selectedFileBytes == null) return;
 
     setState(() => _isProcessing = true);
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadApiUrl));
 
     request.files.add(
-      await http.MultipartFile.fromPath('files', _selectedFile!.path),
+      await http.MultipartFile.fromBytes(
+        'files',
+        _selectedFileBytes!,
+        filename: _selectedFileName ?? 'file.jpg',
+      ),
     );
 
     print(request.files);
@@ -356,14 +366,21 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
   }
 
   Widget _buildPreview() {
-    if (_selectedFile == null) return const SizedBox();
+    if (_selectedFileBytes == null) return const SizedBox();
 
-    if (_selectedFile!.path.endsWith(".pdf")) {
+    final fileName = _selectedFileName ?? '';
+    final isPdf = fileName.toLowerCase().endsWith('.pdf');
+
+    if (isPdf) {
       return const Icon(Icons.picture_as_pdf, size: 100, color: Colors.red);
     } else {
       return ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: Image.file(_selectedFile!, height: 150),
+        child: Image.memory(
+          _selectedFileBytes!,
+          height: 150,
+          fit: BoxFit.cover,
+        ),
       );
     }
   }
