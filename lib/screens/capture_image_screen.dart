@@ -363,10 +363,12 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
               initialValue: _categoryController.text,
               decoration: InputDecoration(
                 labelText: "Category",
+                labelStyle: Theme.of(context).textTheme.bodyMedium,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
+              //dropdownColor: ,
               items:
                   [
                         "Meal",
@@ -381,7 +383,10 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
                       .map(
                         (category) => DropdownMenuItem(
                           value: category,
-                          child: Text(category),
+                          child: Text(
+                            category,
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
                         ),
                       )
                       .toList(),

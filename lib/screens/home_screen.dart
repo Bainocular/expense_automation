@@ -70,14 +70,19 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget homeButton(IconData icon, String label, VoidCallback onTap) {
+  Widget homeButton(
+    BuildContext context,
+    IconData icon,
+    String label,
+    VoidCallback onTap,
+  ) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(18),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 18),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: /*Colors.white*/ Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(blurRadius: 10, color: Colors.black.withOpacity(.05)),
@@ -86,20 +91,30 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 32, color: Colors.blueGrey),
+            Icon(
+              icon,
+              size: 32,
+              color: /*Colors.blueGrey*/ Theme.of(context).iconTheme.color,
+            ),
             const SizedBox(height: 8),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+            Text(
+              label,
+              style: /*const TextStyle(fontWeight: FontWeight.w500)*/ Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget settingsCard() {
+  Widget settingsCard(BuildContext context) {
     return Center(
       child: Card(
         elevation: 10,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        color: Theme.of(context).cardColor,
         child: Container(
           width: 330,
           padding: const EdgeInsets.all(20),
@@ -110,7 +125,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: /*const*/ Icon(
+                    Icons.close,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
                   onPressed: () {
                     setState(() {
                       showSettings = false;
@@ -120,27 +138,52 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               /// ACCOUNT SECTION
-              const Align(
+              /*const*/ Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "Account",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
               ),
 
               const SizedBox(height: 10),
 
               ListTile(
-                leading: const Icon(Icons.person),
-                title: Text(username ?? "Guest"),
-                subtitle: const Text("User"),
+                leading: /*const*/ Icon(
+                  Icons.person,
+                  color: Theme.of(context).iconTheme.color,
+                ),
+                title: Text(
+                  username ?? "Guest",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                subtitle: /*const*/ Text(
+                  "User",
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).hintColor,
+                  ),
+                ),
               ),
 
               DropdownButtonFormField(
                 value: clientName,
-                decoration: const InputDecoration(labelText: "Client Name"),
+                decoration: /*const*/ InputDecoration(
+                  labelText: "Client Name",
+                  labelStyle: Theme.of(context).textTheme.bodyMedium,
+                ),
+                style: Theme.of(context).textTheme.bodyMedium,
+                dropdownColor: Theme.of(context).cardColor,
                 items: clients.map((e) {
-                  return DropdownMenuItem(value: e, child: Text(e));
+                  return DropdownMenuItem(
+                    value: e,
+                    child: Text(
+                      e,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  );
                 }).toList(),
                 onChanged: (value) {
                   saveClientName(value!);
@@ -150,20 +193,34 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 20),
 
               /// GENERAL SECTION
-              const Align(
+              /*const*/ Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "General",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
               ),
 
               const SizedBox(height: 10),
 
               ListTile(
-                leading: const Icon(Icons.straighten),
-                title: const Text("Distance Metric"),
-                subtitle: const Text("Miles"),
+                leading: /*const*/ Icon(
+                  Icons.straighten,
+                  color: Theme.of(context).iconTheme.color,
+                ),
+                title: /*const*/ Text(
+                  "Distance Metric",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                subtitle: /*const*/ Text(
+                  "Miles",
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).hintColor,
+                  ),
+                ),
               ),
 
               const SizedBox(height: 20),
@@ -172,9 +229,19 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: /*Colors.red*/ Theme.of(
+                      context,
+                    ).colorScheme.error,
+                  ),
                   onPressed: logout,
-                  child: const Text("Logout"),
+                  child: /*const*/ Text(
+                    "Logout",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onError,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -246,11 +313,16 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           },
         ),
-        title: const Text("Dashboard", style: TextStyle(color: Colors.black)),
+        title: const Text(
+          "Dashboard" /*, style: TextStyle(color: Colors.black)*/,
+        ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications),
+            icon: /* const */ Icon(
+              Icons.notifications,
+              color: Theme.of(context).iconTheme.color,
+            ),
             onPressed: () {
               setState(() {
                 showNotifications = true;
@@ -270,9 +342,10 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 20),
 
               /// TITLE
-              const Text(
+              /*const*/ Text(
                 "Welcome",
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.titleLarge,
+                //style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 30),
@@ -314,7 +387,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisSpacing: 20,
                   childAspectRatio: 1.4,
                   children: [
-                    homeButton(Icons.camera_alt, "Capture", () {
+                    homeButton(context, Icons.camera_alt, "Capture", () {
                       // Navigator.pushNamed(context, "/capture");
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -323,7 +396,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }),
 
-                    homeButton(Icons.upload, "Upload", () {
+                    homeButton(context, Icons.upload, "Upload", () {
                       // Navigator.pushNamed(context, "/upload");
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -332,7 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }),
 
-                    homeButton(Icons.location_on, "Track", () {
+                    homeButton(context, Icons.location_on, "Track", () {
                       // Navigator.pushNamed(context, "/track");
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -341,7 +414,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }),
 
-                    homeButton(Icons.auto_graph, "Generate", () {
+                    homeButton(context, Icons.auto_graph, "Generate", () {
                       // Navigator.pushNamed(context, "/generate");
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -350,7 +423,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }),
 
-                    homeButton(Icons.history, "History", () {
+                    homeButton(context, Icons.history, "History", () {
                       // Navigator.pushNamed(context, "/history");
                     }),
                   ],
@@ -371,7 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           /// SETTINGS OVERLAY
-          if (showSettings) settingsCard(),
+          if (showSettings) settingsCard(context),
 
           /// NOTIFICATION OVERLAY
           if (showNotifications) notificationCard(),

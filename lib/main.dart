@@ -27,31 +27,74 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       // Enable dark theme
       theme: ThemeData.light().copyWith(
+        cardColor: Colors.white,
         scaffoldBackgroundColor: const Color(0xfff5f6fa),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(color: Colors.black, fontSize: 16),
-          titleMedium: TextStyle(color: Colors.black, fontSize: 18),
+          titleMedium: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+          titleLarge: TextStyle(
+            color: Colors.black,
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.white,
-          titleTextStyle: TextStyle(color: Colors.black, fontSize: 18),
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
           iconTheme: IconThemeData(color: Colors.black),
         ),
+        iconTheme: IconThemeData(color: Colors.black),
+        dropdownMenuTheme: DropdownMenuThemeData(
+          menuStyle: MenuStyle(
+            backgroundColor: MaterialStatePropertyAll(Colors.white),
+          ),
+        ),
+        hintColor: Colors.grey,
       ),
       darkTheme: ThemeData.dark().copyWith(
+        hintColor: Colors.white,
+        cardColor: Colors.grey[900],
         scaffoldBackgroundColor: Colors.black,
         textTheme: const TextTheme(
           bodyMedium: TextStyle(color: Colors.white, fontSize: 16),
-          titleMedium: TextStyle(color: Colors.white, fontSize: 18),
+          titleMedium: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+          titleLarge: TextStyle(
+            color: Colors.white,
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.black,
           titleTextStyle: TextStyle(
             color: Colors.white,
             fontSize: 18,
-            //fontWeight: FontWeight.
+            fontWeight: FontWeight.w600,
           ),
           iconTheme: IconThemeData(color: Colors.white),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+        ),
+        dropdownMenuTheme: DropdownMenuThemeData(
+          menuStyle: MenuStyle(
+            backgroundColor: MaterialStatePropertyAll(Color(0xFF222222)),
+          ),
         ),
       ),
       themeMode: ThemeMode.system,
