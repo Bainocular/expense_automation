@@ -251,11 +251,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget notificationCard() {
+  Widget notificationCard(BuildContext context) {
     return Center(
       child: Card(
         elevation: 10,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        color: Theme.of(context).cardColor,
         child: Container(
           width: 330,
           padding: const EdgeInsets.all(20),
@@ -265,7 +266,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: /*const*/ Icon(
+                    Icons.close,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
                   onPressed: () {
                     setState(() {
                       showNotifications = false;
@@ -273,15 +277,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               ),
-              const Icon(
+              /*const*/ Icon(
                 Icons.notifications_none,
                 size: 50,
-                color: Colors.grey,
+                color: /*Colors.grey*/ Theme.of(context).hintColor,
               ),
               const SizedBox(height: 10),
-              const Text(
+              /*const*/ Text(
                 "No notifications right now",
-                style: TextStyle(fontSize: 16),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),
@@ -447,7 +451,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (showSettings) settingsCard(context),
 
           /// NOTIFICATION OVERLAY
-          if (showNotifications) notificationCard(),
+          if (showNotifications) notificationCard(context),
         ],
       ),
     );
