@@ -26,8 +26,35 @@ class MyApp extends StatelessWidget {
       title: 'Expense Tool',
       debugShowCheckedModeBanner: false,
       // Enable dark theme
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
+      theme: ThemeData.light().copyWith(
+        scaffoldBackgroundColor: const Color(0xfff5f6fa),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: Colors.black, fontSize: 16),
+          titleMedium: TextStyle(color: Colors.black, fontSize: 18),
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.white,
+          titleTextStyle: TextStyle(color: Colors.black, fontSize: 18),
+          iconTheme: IconThemeData(color: Colors.black),
+        ),
+      ),
+      darkTheme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: Colors.black,
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: Colors.white, fontSize: 16),
+          titleMedium: TextStyle(color: Colors.white, fontSize: 18),
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.black,
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            //fontWeight: FontWeight.
+          ),
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+      ),
+      themeMode: ThemeMode.system,
       // themeMode: ThemeMode.dark, // Force dark mode
       //home: LoginPage(),
       //home: OTPLoginScreen(),

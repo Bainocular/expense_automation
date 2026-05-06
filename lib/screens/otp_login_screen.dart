@@ -112,7 +112,13 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text("OTP Successful!"),
+                const Text(
+                  "OTP Successful!",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 15),
 
                 DropdownButtonFormField<String>(
@@ -120,6 +126,10 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: "Select Client",
+                    labelStyle: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   items: const [
                     DropdownMenuItem(
@@ -137,6 +147,10 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
                     DropdownMenuItem(
                       value: "Public Storage",
                       child: Text("Public Storage"),
+                    ),
+                    DropdownMenuItem(
+                      value: "SELECCION Internal",
+                      child: Text("SELECCION Internal"),
                     ),
                   ],
                   onChanged: (value) {
@@ -259,7 +273,9 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
                 "Enter your email to continue",
                 style: TextStyle(
                   fontSize: 16,
-                  color: Color.fromARGB(255, 74, 74, 74),
+                  //color: Color.fromARGB(255, 74, 74, 74),
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 10),
@@ -269,6 +285,10 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   hintText: "Email Address",
+                  hintStyle: TextStyle(
+                    //fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                   prefixIcon: const Icon(Icons.email_outlined),
                   filled: true,
                   fillColor: const Color.fromARGB(255, 130, 212, 247),
@@ -300,7 +320,13 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
                 ),
                 child: _isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text("Send OTP"),
+                    : const Text(
+                        "Send OTP",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
               ),
 
               const SizedBox(height: 30),
