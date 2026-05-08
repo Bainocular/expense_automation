@@ -47,8 +47,8 @@ class _IntroductionSliderScreenState extends State<IntroductionSliderScreen> {
       body: IntroductionScreen(
         pages: [
           PageViewModel(
-            title: 'EXPENSE AUTOMATION TOOL',
-            body: 'Designed and Developed by SELECCION Hyderabad',
+            title: 'Expense Automation Tool',
+            body: 'Designed and Developed by SELECCION Consulting Pvt Ltd',
             image: buildImage("assets/images/seleccion-logo-png.png"),
             decoration: getPageDecoration(),
           ),
@@ -59,21 +59,20 @@ class _IntroductionSliderScreenState extends State<IntroductionSliderScreen> {
             decoration: getPageDecoration(),
           ),
           PageViewModel(
-            title: 'Hassle-free reimbursement',
+            title: 'Hassle-free Reimbursement',
             body: 'Transparency all over the process',
             image: buildImage("assets/images/intro4.jpg"),
             decoration: getPageDecoration(),
           ),
           PageViewModel(
             title: 'Capture or Upload',
-            body:
-                'Either capture, or upload, or enter the invoice details',
+            body: 'Either capture, or upload the invoices',
             image: buildImage("assets/images/intro.jpg"),
             decoration: getPageDecoration(),
           ),
           PageViewModel(
-            title: 'Consolidation made easy',
-            body: 'Categorizing and summing up faster than ever',
+            title: 'Consolidation Made Easy',
+            body: 'Categorizing and summarizing faster than ever',
             image: buildImage("assets/images/intro3.png"),
             decoration: getPageDecoration(),
           ),

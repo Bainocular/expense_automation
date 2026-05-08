@@ -324,9 +324,14 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
               controller: _dateController,
               readOnly: true,
               onTap: _isEditing ? _selectDate : null,
+              style: Theme.of(context).textTheme.bodyMedium,
               decoration: InputDecoration(
                 labelText: "Date",
-                suffixIcon: const Icon(Icons.calendar_today),
+                labelStyle: Theme.of(context).textTheme.bodyMedium,
+                suffixIcon: /*const*/ Icon(
+                  Icons.calendar_today,
+                  color: Theme.of(context).iconTheme.color,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -337,7 +342,8 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
 
             Text(
               "Total Amount: \$${_apiResponse!['total_amount']}",
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              style: /*const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)*/
+                  Theme.of(context).textTheme.bodyMedium,
             ),
 
             const SizedBox(height: 12),
@@ -348,8 +354,12 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
+              style: Theme.of(context).textTheme.bodyMedium,
               decoration: InputDecoration(
-                labelText: "Cost (Discripency)",
+                labelText: "User Amount",
+                labelStyle: Theme.of(context).textTheme.bodyMedium,
+                filled: true,
+                fillColor: Theme.of(context).cardColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -361,6 +371,8 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
             DropdownButtonFormField<String>(
               // value: _selectedCategory,
               initialValue: _categoryController.text,
+              style: Theme.of(context).textTheme.bodyMedium,
+              dropdownColor: Theme.of(context).cardColor,
               decoration: InputDecoration(
                 labelText: "Category",
                 labelStyle: Theme.of(context).textTheme.bodyMedium,
@@ -385,7 +397,7 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
                           value: category,
                           child: Text(
                             category,
-                            style: Theme.of(context).textTheme.labelMedium,
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
                       )
@@ -401,6 +413,8 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
             ),
 
             ElevatedButton(
+              style: Theme.of(context).elevatedButtonTheme.style,
+
               onPressed: () {
                 setState(() {
                   _isEditing = !_isEditing;

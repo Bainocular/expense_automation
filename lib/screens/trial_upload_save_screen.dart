@@ -399,11 +399,16 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
             /// DATE FIELD (Date Picker Only)
             TextField(
               controller: _dateController,
+              style: Theme.of(context).textTheme.bodyMedium,
               readOnly: true,
               onTap: _isEditing ? _selectDate : null,
               decoration: InputDecoration(
                 labelText: "Date",
-                suffixIcon: const Icon(Icons.calendar_today),
+                labelStyle: Theme.of(context).textTheme.bodyMedium,
+                suffixIcon: /*const*/ Icon(
+                  Icons.calendar_today,
+                  color: Theme.of(context).iconTheme.color,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -415,7 +420,8 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
             /// TOTAL AMOUNT
             Text(
               "Total Amount: \$${_apiResponse!['total_amount']}",
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              style: /*const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)*/
+                  Theme.of(context).textTheme.bodyMedium,
             ),
 
             const SizedBox(height: 12),
@@ -427,8 +433,13 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
+              style: Theme.of(context).textTheme.bodyMedium,
               decoration: InputDecoration(
-                labelText: "Cost (Discrepency)",
+                labelText: "User Amount",
+                hintText: "Enter amount if total amount is incorrect",
+                labelStyle: Theme.of(context).textTheme.bodyMedium,
+                filled: true,
+                fillColor: Theme.of(context).cardColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -440,8 +451,11 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
             DropdownButtonFormField<String>(
               //value: _selectedCategory,
               initialValue: _categoryController.text,
+              style: Theme.of(context).textTheme.bodyMedium,
+              dropdownColor: Theme.of(context).cardColor,
               decoration: InputDecoration(
                 labelText: "Category",
+                labelStyle: Theme.of(context).textTheme.bodyMedium,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -460,7 +474,10 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
                       .map(
                         (category) => DropdownMenuItem(
                           value: category,
-                          child: Text(category),
+                          child: Text(
+                            category,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                         ),
                       )
                       .toList(),
@@ -476,6 +493,7 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
 
             /// EDIT / DONE BUTTON
             ElevatedButton(
+              style: Theme.of(context).elevatedButtonTheme.style,
               onPressed: () {
                 setState(() {
                   _isEditing = !_isEditing;
@@ -489,7 +507,8 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
             /// SAVE BUTTON (Disabled while editing)
             ElevatedButton(
               onPressed: (!_isEditing && !_isSaving) ? _saveInvoice : null,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+              style: /*ElevatedButton.styleFrom(backgroundColor: Colors.green)*/
+                  Theme.of(context).elevatedButtonTheme.style,
               child: _isSaving
                   ? const SizedBox(
                       height: 20,
@@ -510,15 +529,20 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Upload Invoice"), centerTitle: true),
+      appBar: AppBar(
+        title: const Text("Upload Invoice"),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
+            /*const*/ Text(
               "Upload JPG, PNG or PDF",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: /*TextStyle(fontSize: 20, fontWeight: FontWeight.bold)*/
+                  Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 20),
 

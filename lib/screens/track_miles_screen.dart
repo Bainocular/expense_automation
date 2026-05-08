@@ -36,7 +36,7 @@ class _MilesScreenState extends State<MilesScreen> {
     }
   }
 
-  Future<void> processAPI() async {
+  Future<void> processAPI(BuildContext context) async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -53,20 +53,29 @@ class _MilesScreenState extends State<MilesScreen> {
         "user": email,
         "date": DateFormat('yyyy-MM-dd').format(selectedDate),
         "miles": double.parse(milesController.text),
-        "customer": client
+        "customer": client,
       };
 
       print(body);
       print(client);
 
       final response = await http.post(
-        Uri.parse("https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/cost-miles"),
+        Uri.parse(
+          "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/cost-miles",
+        ),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(body),
       );
 
-      print(response.body);
+      print(response);
 
+      String result = "";
+
+      if (jsonDecode(response.body)["result"] != null) {
+        result = jsonDecode(response.body)["result"].toString();
+      } else if (jsonDecode(response.body)["error"] != null) {
+        result = jsonDecode(response.body)["error"].toString();
+      }
       setState(() {
         isLoading = false;
       });
@@ -77,8 +86,14 @@ class _MilesScreenState extends State<MilesScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title: const Text("Response"),
-          content: Text(response.body),
+          title: /*const*/ Text(
+            "Message",
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          content: Text(
+            /*jsonDecode(response.body)['result']*/ result,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -86,7 +101,7 @@ class _MilesScreenState extends State<MilesScreen> {
                 Navigator.pop(context);
               },
               child: const Text("OK"),
-            )
+            ),
           ],
         ),
       );
@@ -100,10 +115,7 @@ class _MilesScreenState extends State<MilesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Mileage Processor"),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text("Mileage Processor"), elevation: 0),
       body: Stack(
         children: [
           // Background Gradient
@@ -112,10 +124,7 @@ class _MilesScreenState extends State<MilesScreen> {
               gradient: RadialGradient(
                 radius: 1.2,
                 center: Alignment.topLeft,
-                colors: [
-                  Color(0xff4facfe),
-                  Color(0xff00f2fe),
-                ],
+                colors: [Color(0xff4facfe), Color(0xff00f2fe)],
               ),
             ),
           ),
@@ -135,7 +144,6 @@ class _MilesScreenState extends State<MilesScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-
                         const Text(
                           "Submit Miles",
                           style: TextStyle(
@@ -164,14 +172,12 @@ class _MilesScreenState extends State<MilesScreen> {
                               ),
                             ),
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  DateFormat('yyyy-MM-dd')
-                                      .format(selectedDate),
+                                  DateFormat('yyyy-MM-dd').format(selectedDate),
                                 ),
-                                const Icon(Icons.calendar_today)
+                                const Icon(Icons.calendar_today),
                               ],
                             ),
                           ),
@@ -182,15 +188,18 @@ class _MilesScreenState extends State<MilesScreen> {
                         // MILES FIELD
                         TextFormField(
                           controller: milesController,
-                          keyboardType:
-                              const TextInputType.numberWithOptions(
-                                  decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          style: Theme.of(context).textTheme.bodyMedium,
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}')),
+                              RegExp(r'^\d+\.?\d{0,2}'),
+                            ),
                           ],
                           decoration: InputDecoration(
                             labelText: "Miles",
+                            labelStyle: Theme.of(context).textTheme.bodyMedium,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -209,7 +218,9 @@ class _MilesScreenState extends State<MilesScreen> {
                           width: double.infinity,
                           height: 50,
                           child: ElevatedButton(
-                            onPressed: processAPI,
+                            onPressed: () async {
+                              processAPI(context);
+                            },
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -232,10 +243,8 @@ class _MilesScreenState extends State<MilesScreen> {
           if (isLoading)
             Container(
               color: Colors.black45,
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
+              child: const Center(child: CircularProgressIndicator()),
+            ),
         ],
       ),
     );

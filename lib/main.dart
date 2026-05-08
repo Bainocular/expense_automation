@@ -27,6 +27,21 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       // Enable dark theme
       theme: ThemeData.light().copyWith(
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
+
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadiusGeometry.circular(12),
+            ),
+          ),
+        ),
         cardColor: Colors.white,
         scaffoldBackgroundColor: const Color(0xfff5f6fa),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
@@ -61,6 +76,21 @@ class MyApp extends StatelessWidget {
         hintColor: Colors.grey,
       ),
       darkTheme: ThemeData.dark().copyWith(
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
+
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadiusGeometry.circular(12),
+            ),
+          ),
+        ),
         hintColor: Colors.white,
         cardColor: Colors.grey[900],
         scaffoldBackgroundColor: Colors.black,

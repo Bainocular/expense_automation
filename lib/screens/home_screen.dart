@@ -341,7 +341,9 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Stack(
         children: [
           /// MAIN CONTENT
+          // SingleChildScrollView(
           Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 20),
 
@@ -418,18 +420,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }),
 
-                    homeButton(context, Icons.auto_graph, "Generate", () {
-                      // Navigator.pushNamed(context, "/generate");
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const GenerateReportScreen(),
-                        ),
-                      );
-                    }),
+                    homeButton(
+                      context,
+                      Icons.auto_graph,
+                      "Generate Report",
+                      () {
+                        // Navigator.pushNamed(context, "/generate");
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const GenerateReportScreen(),
+                          ),
+                        );
+                      },
+                    ),
 
-                    homeButton(context, Icons.history, "History", () {
+                    /*homeButton(context, Icons.history, "History", () {
                       // Navigator.pushNamed(context, "/history");
-                    }),
+                    }),*/
                   ],
                 ),
               ),
@@ -446,6 +453,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
+          //),
 
           /// SETTINGS OVERLAY
           if (showSettings) settingsCard(context),
