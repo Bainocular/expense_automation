@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:trial_exp_app/screens/capture_image_screen.dart';
+import 'package:trial_exp_app/screens/configure_track_miles.dart';
 import 'package:trial_exp_app/screens/generate_report_screen.dart';
+import 'package:trial_exp_app/screens/register_user_screen.dart';
 import 'package:trial_exp_app/screens/splash_screen.dart';
 import 'package:trial_exp_app/screens/track_miles_screen.dart';
 import 'package:trial_exp_app/screens/trial_upload_save_screen.dart';
@@ -21,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String? username = "";
   String? clientName = "Monster Energy";
-
+  //Bool
   List<String> clients = [
     "Monster Energy",
     "Jacklinks",
@@ -437,6 +439,64 @@ class _HomeScreenState extends State<HomeScreen> {
                     /*homeButton(context, Icons.history, "History", () {
                       // Navigator.pushNamed(context, "/history");
                     }),*/
+                    FutureBuilder<bool>(
+                      future: PrefService.isAdmin(),
+                      builder: (context, snapshot) {
+                        // Loading state
+                        if (!snapshot.hasData) {
+                          return const SizedBox();
+                        }
+
+                        // Show only for admin
+                        if (snapshot.data == true) {
+                          return homeButton(
+                            context,
+                            Icons.auto_graph,
+                            "Register User",
+                            () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const AddUserScreen(),
+                                ),
+                              );
+                            },
+                          );
+                        }
+
+                        // Hide for non-admin users
+                        return const SizedBox();
+                      },
+                    ),
+
+                    FutureBuilder<bool>(
+                      future: PrefService.isAdmin(),
+                      builder: (context, snapshot) {
+                        // Loading state
+                        if (!snapshot.hasData) {
+                          return const SizedBox();
+                        }
+
+                        // Show only for admin
+                        if (snapshot.data == true) {
+                          return homeButton(
+                            context,
+                            Icons.auto_graph,
+                            "Configure Track Miles",
+                            () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ConfigureMilesScreen(),
+                                ),
+                              );
+                            },
+                          );
+                        }
+
+                        // Hide for non-admin users
+                        return const SizedBox();
+                      },
+                    ),
                   ],
                 ),
               ),

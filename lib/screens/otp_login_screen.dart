@@ -77,6 +77,30 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
       // _showDialog("Success", "OTP Verified Successfully!");
       // await saveEmail(_emailController.text.trim());
       await PrefService.saveEmail(_emailController.text.trim());
+      final data;
+      final user;
+      final userDataUrl = Uri.parse(
+        "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/get-users",
+      );
+
+      final response = await http.post(
+        userDataUrl,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'user': _emailController.text.trim()}),
+      );
+
+      if (response.statusCode == 200) {
+        data = jsonDecode(response.body);
+        user = data['result'];
+      } else {
+        print('API Error: ${response.statusCode}');
+        print(response.body);
+        user = null;
+      }
+
+      if (user != null) {
+        await PrefService.saveRole(user[5]);
+      }
 
       // showDialog(
       //   context: context,

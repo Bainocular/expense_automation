@@ -30,4 +30,11 @@ class PrefService {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('role');
   }
+
+  static Future<bool> isAdmin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final role = prefs.getString('role');
+
+    return role?.toLowerCase() == 'admin';
+  }
 }
