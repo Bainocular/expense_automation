@@ -95846,7 +95846,7 @@ i=A.ai(["Content-Type","application/json"],j,j)
 h=n.d
 g=n.e
 s=7
-return A.w(A.tU(k,B.af.pd(A.b([A.ai(["name",B.c.hE(h.a.a),"email",B.c.hE(g.a.a),"role",n.r],j,j)],t.m0),null),i),$async$AN)
+return A.w(A.tU(k,B.af.pd(A.b([A.ai(["name",B.c.hE(h.a.a),"username",B.c.hE(g.a.a),"role",n.r],j,j)],t.m0),null),i),$async$AN)
 case 7:m=b
 A.ff(m.b)
 i=m
