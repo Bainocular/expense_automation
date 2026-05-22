@@ -95878,7 +95878,7 @@ case 1:return A.F(q,r)
 case 2:return A.E(o.at(-1),r)}})
 return A.G($async$AN,r)},
 K(a){var s=this,r=null,q=A.ni(r,r,r,r,r,B.AZ),p=A.SG(!1,s.d,B.Iv,r,r,r,r,r,r,new A.aoF()),o=A.SG(!1,s.e,B.Iy,r,r,B.AQ,r,r,r,new A.aoG()),n=s.r,m=A.K(a),l=A.K(a),k=t.fo
-k=A.a4(new A.ab(A.b(["Admin","Consultant"],t.s),new A.aoH(a),k),k.h("at.E"))
+k=A.a4(new A.ab(A.b(["Admin","Consultant","G&A","Sales","Technical/Functional"],t.s),new A.aoH(a),k),k.h("at.E"))
 n=A.Aw(B.Iu,l.at,r,k,new A.aoI(s),m.ok.z,n,t.N)
 m=s.w?r:s.gao5()
 l=A.K(a)
