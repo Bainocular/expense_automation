@@ -38,7 +38,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
         body: jsonEncode([
           {
             "name": nameController.text.trim(),
-            "email": emailController.text.trim(),
+            "username": emailController.text.trim(),
             "role": selectedRole,
           },
         ]),
@@ -134,17 +134,24 @@ class _AddUserScreenState extends State<AddUserScreen> {
                   labelText: 'Role',
                   border: OutlineInputBorder(),
                 ),
-                items: ['Admin', 'Consultant']
-                    .map(
-                      (role) => DropdownMenuItem(
-                        value: role,
-                        child: Text(
-                          role,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                    )
-                    .toList(),
+                items:
+                    [
+                          'Admin',
+                          'Consultant',
+                          'G&A',
+                          'Sales',
+                          'Technical/Functional',
+                        ]
+                        .map(
+                          (role) => DropdownMenuItem(
+                            value: role,
+                            child: Text(
+                              role,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ),
+                        )
+                        .toList(),
                 onChanged: (value) {
                   setState(() {
                     selectedRole = value!;

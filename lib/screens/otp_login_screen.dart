@@ -17,7 +17,7 @@ class OTPLoginScreen extends StatefulWidget {
 class _OTPLoginScreenState extends State<OTPLoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
-
+  TextEditingController _nameController = TextEditingController();
   final List<TextEditingController> _otpControllers = List.generate(
     6,
     (_) => TextEditingController(),
@@ -26,10 +26,13 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
   bool _isLoading = false;
   bool _showOtpField = false;
   String? _serverOtp;
+  String _selectedUserRole = 'Consultant';
 
   final String apiUrl =
       "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/authenticate-user";
 
+  final String registerUserUrl =
+      "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/register-user";
   // Email Regex
   bool isValidEmail(String email) {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
@@ -57,16 +60,63 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
 
         setState(() {
           _serverOtp = data["otp"].toString();
+          _nameController.text = data["name"];
           _showOtpField = true;
         });
       } else if (response.statusCode == 400) {
         _showDialog("Error", response.body);
       }
     } catch (e) {
+      print("Error: ${e}");
       _showDialog("Error", "Something went wrong");
     }
 
     setState(() => _isLoading = false);
+  }
+
+  Future<void> addUser(name, email) async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse(registerUserUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode([
+          {
+            "name": name.trim(),
+            "username": email.trim(),
+            "role": _selectedUserRole,
+          },
+        ]),
+      );
+
+      print(response.statusCode);
+      print(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Registered Successfully")),
+        );
+
+        setState(() {
+          _selectedUserRole = 'Consultant';
+        });
+      } else {
+        print("Not Successfull");
+        print(response.body);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(response.body)));
+      }
+    } catch (e) {
+      print("Error");
+      print(e);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 
   void validateOtp() async {
@@ -78,7 +128,8 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
       // await saveEmail(_emailController.text.trim());
       await PrefService.saveEmail(_emailController.text.trim());
       final data;
-      final user;
+      //final user;
+      dynamic user;
       final userDataUrl = Uri.parse(
         "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/get-users",
       );
@@ -88,10 +139,15 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'user': _emailController.text.trim()}),
       );
-
+      print("Response status: ${response.statusCode}");
+      print('user data in db: ${jsonDecode(response.body)}');
       if (response.statusCode == 200) {
         data = jsonDecode(response.body);
-        user = data['result'];
+        if (data['result'] != null) {
+          user = data['result'];
+        } else if (data['error'] != null) {
+          user = null;
+        }
       } else {
         print('API Error: ${response.statusCode}');
         print(response.body);
@@ -99,9 +155,155 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
       }
 
       if (user != null) {
+        print("Inside user not equal to null : ${user}");
         await PrefService.saveRole(user[5]);
-      }
+      } else if (user == null) {
+        print("Inside user equal to null : ${user}");
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: /*const*/ Text(
+              "Message",
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<String>(
+                  value: _selectedUserRole,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  dropdownColor: Theme.of(context).cardColor,
+                  decoration: const InputDecoration(
+                    labelText: 'Role',
+                    border: OutlineInputBorder(),
+                  ),
+                  items:
+                      [
+                            'Admin',
+                            'Consultant',
+                            'G&A',
+                            'Sales',
+                            'Technical/Functional',
+                          ]
+                          .map(
+                            (role) => DropdownMenuItem(
+                              value: role,
+                              child: Text(
+                                role,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ),
+                          )
+                          .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedUserRole = value!;
+                    });
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  //addUser(user[1], user[2]);
+                  addUser(
+                    _nameController.text.trim(),
+                    _emailController.text.trim(),
+                  );
 
+                  Navigator.pop(context);
+
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      String? dropdownValue = "Monster Energy"; // default value
+
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        title: const Text("Success"),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              "OTP Successful!",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+
+                            DropdownButtonFormField<String>(
+                              value: dropdownValue,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: "Select Client",
+                                labelStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              items: const [
+                                DropdownMenuItem(
+                                  value: "Monster Energy",
+                                  child: Text("Monster Energy"),
+                                ),
+                                DropdownMenuItem(
+                                  value: "Jacklinks",
+                                  child: Text("Jacklinks"),
+                                ),
+                                DropdownMenuItem(
+                                  value: "Luxottica",
+                                  child: Text("Luxottica"),
+                                ),
+                                DropdownMenuItem(
+                                  value: "Public Storage",
+                                  child: Text("Public Storage"),
+                                ),
+                                DropdownMenuItem(
+                                  value: "SELECCION Internal",
+                                  child: Text("SELECCION Internal"),
+                                ),
+                              ],
+                              onChanged: (value) {
+                                dropdownValue = value;
+                              },
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () async {
+                              await PrefService.saveClient(dropdownValue);
+
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomeScreen(),
+                                ),
+                              );
+                            },
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: const Text("Register"),
+              ),
+            ],
+          ),
+        );
+
+        return;
+      }
       // showDialog(
       //   context: context,
       //   builder: (_) => AlertDialog(
