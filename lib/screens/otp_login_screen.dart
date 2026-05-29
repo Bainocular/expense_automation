@@ -180,24 +180,17 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
                     labelText: 'Role',
                     border: OutlineInputBorder(),
                   ),
-                  items:
-                      [
-                            'Admin',
-                            'Consultant',
-                            'G&A',
-                            'Sales',
-                            'Technical/Functional',
-                          ]
-                          .map(
-                            (role) => DropdownMenuItem(
-                              value: role,
-                              child: Text(
-                                role,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ),
-                          )
-                          .toList(),
+                  items: ['Consultant', 'G&A', 'Sales', 'Technical/Functional']
+                      .map(
+                        (role) => DropdownMenuItem(
+                          value: role,
+                          child: Text(
+                            role,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ),
+                      )
+                      .toList(),
                   onChanged: (value) {
                     setState(() {
                       _selectedUserRole = value!;
@@ -265,6 +258,22 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
                                 DropdownMenuItem(
                                   value: "Public Storage",
                                   child: Text("Public Storage"),
+                                ),
+                                DropdownMenuItem(
+                                  value: "Perdue",
+                                  child: Text("Perdue"),
+                                ),
+                                DropdownMenuItem(
+                                  value: "Kiewit",
+                                  child: Text("Kiewit"),
+                                ),
+                                DropdownMenuItem(
+                                  value: "MiniMed",
+                                  child: Text("MiniMed"),
+                                ),
+                                DropdownMenuItem(
+                                  value: "Sharp",
+                                  child: Text("Sharp"),
                                 ),
                                 DropdownMenuItem(
                                   value: "SELECCION Internal",
@@ -374,6 +383,10 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
                       value: "Public Storage",
                       child: Text("Public Storage"),
                     ),
+                    DropdownMenuItem(value: "Perdue", child: Text("Perdue")),
+                    DropdownMenuItem(value: "Kiewit", child: Text("Kiewit")),
+                    DropdownMenuItem(value: "MiniMed", child: Text("MiniMed")),
+                    DropdownMenuItem(value: "Sharp", child: Text("Sharp")),
                     DropdownMenuItem(
                       value: "SELECCION Internal",
                       child: Text("SELECCION Internal"),

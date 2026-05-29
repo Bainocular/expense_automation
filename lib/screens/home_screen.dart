@@ -29,6 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
     "Jacklinks",
     "Luxottica",
     "Public Storage",
+    "Perdue",
+    "Kiewit",
+    "MiniMed",
+    "Sharp",
     "SELECCION Internal",
   ];
 
