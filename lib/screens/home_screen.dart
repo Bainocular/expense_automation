@@ -8,6 +8,7 @@ import 'package:trial_exp_app/screens/register_user_screen.dart';
 import 'package:trial_exp_app/screens/splash_screen.dart';
 import 'package:trial_exp_app/screens/track_miles_screen.dart';
 import 'package:trial_exp_app/screens/trial_upload_save_screen.dart';
+import 'package:trial_exp_app/screens/user_invoices_list_screen.dart';
 import 'package:trial_exp_app/services/shared_pref_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -439,6 +440,21 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                     ),
+
+                    // homeButton(
+                    //   context,
+                    //   Icons.list_alt_rounded,
+                    //   "Invoices List",
+                    //   () {
+                    //     // Navigator.pushNamed(context, "/generate");
+                    //     Navigator.of(context).push(
+                    //       MaterialPageRoute(
+                    //         builder: (context) =>
+                    //             const UserInvoicesListScreen(),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
 
                     /*homeButton(context, Icons.history, "History", () {
                       // Navigator.pushNamed(context, "/history");
