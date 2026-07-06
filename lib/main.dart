@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
-          iconTheme: IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: Colors.black, size: 18),
         ),
         iconTheme: IconThemeData(color: Colors.black),
         dropdownMenuTheme: DropdownMenuThemeData(
@@ -116,7 +116,7 @@ class MyApp extends StatelessWidget {
           ),
           iconTheme: IconThemeData(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: Colors.white, size: 18),
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.blue,
           brightness: Brightness.dark,

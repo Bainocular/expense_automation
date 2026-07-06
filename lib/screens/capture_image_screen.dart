@@ -26,6 +26,7 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
   bool isCameraInitialized = false;
   bool _isSaving = false;
   bool _isEditing = false;
+  bool _isProcessing = false;
 
   final String saveApiUrl =
       "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/save-invoices";
@@ -55,6 +56,7 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
     const String apiUrl =
         "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/read-invoices";
 
+    setState(() => _isProcessing = true);
     var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
 
     // Add multiple files
@@ -82,6 +84,7 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
       var response = await request.send();
       var responseBody = await response.stream.bytesToString();
 
+      setState(() => _isProcessing = false);
       if (response.statusCode == 200) {
         print("Upload success");
         print(responseBody);
@@ -104,6 +107,9 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
         return null;
       }
     } catch (e) {
+      setState(() {
+        _isProcessing = false;
+      });
       print("Error uploading images: $e");
     }
   }
@@ -126,7 +132,7 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
     }
   }
 
-  Future<void> _saveInvoice() async {
+  Future<void> _saveInvoice(BuildContext context) async {
     if (_apiResponse == null) return;
 
     setState(() => _isSaving = true);
@@ -134,6 +140,7 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
     final updatedInvoice = Map<String, dynamic>.from(_apiResponse!);
     String? email_address = await PrefService.getEmail();
     String? client_name = await PrefService.getClient();
+    String result;
 
     updatedInvoice['date'] = _dateController.text;
     updatedInvoice['discrepencyAmt'] =
@@ -156,14 +163,37 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
     setState(() => _isSaving = false);
 
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Saved Successfully")));
+      // ScaffoldMessenger.of(
+      //   context,
+      // ).showSnackBar(const SnackBar(content: Text("Saved Successfully")));
+      result = "Saved Successfully";
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Failing Saving")));
+      // ScaffoldMessenger.of(
+      //   context,
+      // ).showSnackBar(const SnackBar(content: Text("Failing Saving")));
+      result = "Failing Saving";
     }
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: /*const*/ Text(
+          "Message",
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        content: Text(result, style: Theme.of(context).textTheme.bodyMedium),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -556,10 +586,15 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
               ),
 
               ElevatedButton(
-                onPressed: isLastPageChecked && capturedImages.isNotEmpty
+                onPressed:
+                    isLastPageChecked &&
+                        capturedImages.isNotEmpty &&
+                        !_isProcessing
                     ? _submitImages
                     : null,
-                child: const Text("Process"),
+                child: _isProcessing
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text("Process"),
               ),
 
               //const Spacer(),
@@ -572,13 +607,24 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
               /// Submit Button
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
+                child: /*ElevatedButton(
                   onPressed:
                       isLastPageChecked &&
                           capturedImages.isNotEmpty &&
                           !_isEditing &&
                           !_isSaving
-                      ? _saveInvoice
+                      ? _saveInvoice(context)
+                      : null,
+                  child: const Text("Submit"),
+                ),*/ ElevatedButton(
+                  onPressed:
+                      isLastPageChecked &&
+                          capturedImages.isNotEmpty &&
+                          !_isEditing &&
+                          !_isSaving
+                      ? () async {
+                          _saveInvoice(context);
+                        }
                       : null,
                   child: const Text("Submit"),
                 ),

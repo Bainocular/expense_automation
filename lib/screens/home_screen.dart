@@ -441,20 +441,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
 
-                    // homeButton(
-                    //   context,
-                    //   Icons.list_alt_rounded,
-                    //   "Invoices List",
-                    //   () {
-                    //     // Navigator.pushNamed(context, "/generate");
-                    //     Navigator.of(context).push(
-                    //       MaterialPageRoute(
-                    //         builder: (context) =>
-                    //             const UserInvoicesListScreen(),
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
+                    /*homeButton(
+                      context,
+                      Icons.list_alt_rounded,
+                      "Invoices List",
+                      () {
+                        // Navigator.pushNamed(context, "/generate");
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const UserInvoicesListScreen(),
+                          ),
+                        );
+                      },
+                    ),*/
 
                     /*homeButton(context, Icons.history, "History", () {
                       // Navigator.pushNamed(context, "/history");

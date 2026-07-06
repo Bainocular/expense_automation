@@ -326,7 +326,7 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
   }
 
   /// SAVE API
-  Future<void> _saveInvoice() async {
+  Future<void> _saveInvoice(BuildContext context) async {
     if (_apiResponse == null) return;
 
     setState(() => _isSaving = true);
@@ -334,6 +334,7 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
     final updatedInvoice = Map<String, dynamic>.from(_apiResponse!);
     String? email_address = await PrefService.getEmail();
     String? client_name = await PrefService.getClient();
+    String result;
 
     updatedInvoice['date'] = _dateController.text;
     updatedInvoice['discrepencyAmt'] =
@@ -355,14 +356,37 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
     setState(() => _isSaving = false);
 
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Saved Successfully")));
+      // ScaffoldMessenger.of(
+      //   context,
+      // ).showSnackBar(const SnackBar(content: Text("Saved Successfully")));
+      result = "Saved Successfully";
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Save Failed")));
+      // ScaffoldMessenger.of(
+      //   context,
+      // ).showSnackBar(const SnackBar(content: Text("Save Failed")));
+      result = "Save Failed";
     }
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: /*const*/ Text(
+          "Message",
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        content: Text(result, style: Theme.of(context).textTheme.bodyMedium),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildPreview() {
@@ -506,7 +530,11 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
 
             /// SAVE BUTTON (Disabled while editing)
             ElevatedButton(
-              onPressed: (!_isEditing && !_isSaving) ? _saveInvoice : null,
+              onPressed: (!_isEditing && !_isSaving)
+                  ? () async {
+                      _saveInvoice(context);
+                    }
+                  : null,
               style: /*ElevatedButton.styleFrom(backgroundColor: Colors.green)*/
                   Theme.of(context).elevatedButtonTheme.style,
               child: _isSaving
