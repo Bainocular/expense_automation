@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:trial_exp_app/screens/capture_image_screen.dart';
@@ -36,6 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
     "Sharp",
     "SELECCION Internal",
   ];
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -77,6 +80,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   Widget homeButton(
     BuildContext context,
     IconData icon,
@@ -106,6 +115,9 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 8),
             Text(
               label,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.visible,
               style: /*const TextStyle(fontWeight: FontWeight.w500)*/ Theme.of(
                 context,
               ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
@@ -349,99 +361,133 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           /// MAIN CONTENT
           // SingleChildScrollView(
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 20),
+          Scrollbar(
+            controller: _scrollController,
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 20),
 
-              /// TITLE
-              /*const*/ Text(
-                "Welcome",
-                style: Theme.of(context).textTheme.titleLarge,
-                //style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-              ),
+                  /// TITLE
+                  /*const*/ Text(
+                    "Welcome",
+                    style: Theme.of(context).textTheme.titleLarge,
+                    //style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                  ),
 
-              const SizedBox(height: 30),
+                  const SizedBox(height: 30),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    const Text("Client Name"),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: clientName,
-                        items: clients.map((e) {
-                          return DropdownMenuItem(value: e, child: Text(e));
-                        }).toList(),
-                        onChanged: (value) {
-                          saveClientName(value!);
-                        },
-                        decoration: const InputDecoration(
-                          isDense: true,
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              /// BUTTON GRID
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
-                  childAspectRatio: 1.4,
-                  children: [
-                    homeButton(context, Icons.camera_alt, "Capture", () {
-                      // Navigator.pushNamed(context, "/capture");
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const DocumentCaptureScreen(),
-                        ),
-                      );
-                    }),
-
-                    homeButton(context, Icons.upload, "Upload", () {
-                      // Navigator.pushNamed(context, "/upload");
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const UploadInvoiceScreen(),
-                        ),
-                      );
-                    }),
-
-                    homeButton(context, Icons.location_on, "Track", () {
-                      // Navigator.pushNamed(context, "/track");
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const MilesScreen(),
-                        ),
-                      );
-                    }),
-
-                    homeButton(
-                      context,
-                      Icons.auto_graph,
-                      "Generate Report",
-                      () {
-                        // Navigator.pushNamed(context, "/generate");
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const GenerateReportScreen(),
-                          ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxWidth < 500) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Client Name"),
+                              const SizedBox(height: 8),
+                              DropdownButtonFormField<String>(
+                                value: clientName,
+                                items: clients.map((e) {
+                                  return DropdownMenuItem(
+                                    value: e,
+                                    child: Text(e),
+                                  );
+                                }).toList(),
+                                onChanged: (value) => saveClientName(value!),
+                              ),
+                            ],
+                          );
+                        }
+                        return Row(
+                          children: [
+                            const Text("Client Name"),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                value: clientName,
+                                items: clients.map((e) {
+                                  return DropdownMenuItem(
+                                    value: e,
+                                    child: Text(e),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  saveClientName(value!);
+                                },
+                                decoration: const InputDecoration(
+                                  isDense: true,
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                          ],
                         );
                       },
                     ),
+                  ),
 
-                    /*homeButton(
+                  const SizedBox(height: 30),
+
+                  /// BUTTON GRID
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      shrinkWrap: true,
+                      mainAxisSpacing: 20,
+                      crossAxisSpacing: 20,
+                      childAspectRatio: 1.1,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        homeButton(context, Icons.camera_alt, "Capture", () {
+                          // Navigator.pushNamed(context, "/capture");
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const DocumentCaptureScreen(),
+                            ),
+                          );
+                        }),
+
+                        homeButton(context, Icons.upload, "Upload", () {
+                          // Navigator.pushNamed(context, "/upload");
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const UploadInvoiceScreen(),
+                            ),
+                          );
+                        }),
+
+                        homeButton(context, Icons.location_on, "Track", () {
+                          // Navigator.pushNamed(context, "/track");
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const MilesScreen(),
+                            ),
+                          );
+                        }),
+
+                        homeButton(
+                          context,
+                          Icons.auto_graph,
+                          "Generate Report",
+                          () {
+                            // Navigator.pushNamed(context, "/generate");
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const GenerateReportScreen(),
+                              ),
+                            );
+                          },
+                        ),
+
+                        /*homeButton(
                       context,
                       Icons.list_alt_rounded,
                       "Invoices List",
@@ -456,83 +502,88 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),*/
 
-                    /*homeButton(context, Icons.history, "History", () {
+                        /*homeButton(context, Icons.history, "History", () {
                       // Navigator.pushNamed(context, "/history");
                     }),*/
-                    FutureBuilder<bool>(
-                      future: PrefService.isAdmin(),
-                      builder: (context, snapshot) {
-                        // Loading state
-                        if (!snapshot.hasData) {
-                          return const SizedBox();
-                        }
+                        FutureBuilder<bool>(
+                          future: PrefService.isAdmin(),
+                          builder: (context, snapshot) {
+                            // Loading state
+                            if (!snapshot.hasData) {
+                              return const SizedBox();
+                            }
 
-                        // Show only for admin
-                        if (snapshot.data == true) {
-                          return homeButton(
-                            context,
-                            Icons.auto_graph,
-                            "Register User",
-                            () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const AddUserScreen(),
-                                ),
+                            // Show only for admin
+                            if (snapshot.data == true) {
+                              return homeButton(
+                                context,
+                                Icons.auto_graph,
+                                "Register User",
+                                () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AddUserScreen(),
+                                    ),
+                                  );
+                                },
                               );
-                            },
-                          );
-                        }
+                            }
 
-                        // Hide for non-admin users
-                        return const SizedBox();
-                      },
-                    ),
+                            // Hide for non-admin users
+                            return const SizedBox();
+                          },
+                        ),
 
-                    FutureBuilder<bool>(
-                      future: PrefService.isAdmin(),
-                      builder: (context, snapshot) {
-                        // Loading state
-                        if (!snapshot.hasData) {
-                          return const SizedBox();
-                        }
+                        FutureBuilder<bool>(
+                          future: PrefService.isAdmin(),
+                          builder: (context, snapshot) {
+                            // Loading state
+                            if (!snapshot.hasData) {
+                              return const SizedBox();
+                            }
 
-                        // Show only for admin
-                        if (snapshot.data == true) {
-                          return homeButton(
-                            context,
-                            Icons.auto_graph,
-                            "Configure Track Miles",
-                            () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ConfigureMilesScreen(),
-                                ),
+                            // Show only for admin
+                            if (snapshot.data == true) {
+                              return homeButton(
+                                context,
+                                Icons.auto_graph,
+                                "Configure Track Miles",
+                                () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ConfigureMilesScreen(),
+                                    ),
+                                  );
+                                },
                               );
-                            },
-                          );
-                        }
+                            }
 
-                        // Hide for non-admin users
-                        return const SizedBox();
-                      },
+                            // Hide for non-admin users
+                            return const SizedBox();
+                          },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
 
-              const Spacer(),
+                  //const Spacer(),
+                  const SizedBox(height: 20),
 
-              /// FOOTER
-              const Padding(
-                padding: EdgeInsets.all(16),
-                child: Text(
-                  "© 2026. SELECCION Consulting, Hyderabad.",
-                  style: TextStyle(color: Colors.grey),
-                ),
+                  /// FOOTER
+                  const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      "© 2026. SELECCION Consulting, Hyderabad.",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
+
           //),
 
           /// SETTINGS OVERLAY
