@@ -86,7 +86,7 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
         body: jsonEncode([
           {
             "name": name.trim(),
-            "username": email.trim(),
+            "username": email.trim().toLowerCase(),
             "role": _selectedUserRole,
           },
         ]),
@@ -126,7 +126,7 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
     if (enteredOtp == _serverOtp) {
       // _showDialog("Success", "OTP Verified Successfully!");
       // await saveEmail(_emailController.text.trim());
-      await PrefService.saveEmail(_emailController.text.trim());
+      await PrefService.saveEmail(_emailController.text.trim().toLowerCase());
       final data;
       //final user;
       dynamic user;
@@ -137,7 +137,7 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
       final response = await http.post(
         userDataUrl,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'user': _emailController.text.trim()}),
+        body: jsonEncode({'user': _emailController.text.trim().toLowerCase()}),
       );
       print("Response status: ${response.statusCode}");
       print('user data in db: ${jsonDecode(response.body)}');
@@ -205,7 +205,7 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
                   //addUser(user[1], user[2]);
                   addUser(
                     _nameController.text.trim(),
-                    _emailController.text.trim(),
+                    _emailController.text.trim().toLowerCase(),
                   );
 
                   Navigator.pop(context);

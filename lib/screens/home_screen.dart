@@ -11,6 +11,8 @@ import 'package:trial_exp_app/screens/track_miles_screen.dart';
 import 'package:trial_exp_app/screens/trial_upload_save_screen.dart';
 import 'package:trial_exp_app/screens/user_invoices_list_screen.dart';
 import 'package:trial_exp_app/services/shared_pref_service.dart';
+import 'package:trial_exp_app/screens/dashboard_screen.dart';
+import 'package:trial_exp_app/screens/admin_shell.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -488,19 +490,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
 
                         /*homeButton(
-                      context,
-                      Icons.list_alt_rounded,
-                      "Invoices List",
-                      () {
-                        // Navigator.pushNamed(context, "/generate");
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const UserInvoicesListScreen(),
-                          ),
-                        );
-                      },
-                    ),*/
+                          context,
+                          Icons.list_alt_rounded,
+                          "Invoices List",
+                          () {
+                            // Navigator.pushNamed(context, "/generate");
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const UserInvoicesListScreen(),
+                              ),
+                            );
+                          },
+                        ),*/
 
                         /*homeButton(context, Icons.history, "History", () {
                       // Navigator.pushNamed(context, "/history");
@@ -564,6 +566,37 @@ class _HomeScreenState extends State<HomeScreen> {
                             return const SizedBox();
                           },
                         ),
+
+                        /*FutureBuilder<bool>(
+                          future: PrefService.isAdmin(),
+                          builder: (context, snapshot) {
+                            // Loading state
+                            if (!snapshot.hasData) {
+                              return const SizedBox();
+                            }
+
+                            // Show only for admin
+                            if (snapshot.data == true) {
+                              return homeButton(
+                                context,
+                                Icons.admin_panel_settings,
+                                "DashBoard",
+                                () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          //const DashboardScreen(),
+                                          const AdminShell(),
+                                    ),
+                                  );
+                                },
+                              );
+                            }
+
+                            // Hide for non-admin users
+                            return const SizedBox();
+                          },
+                        ),*/
                       ],
                     ),
                   ),
