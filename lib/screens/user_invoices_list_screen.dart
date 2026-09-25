@@ -9,6 +9,7 @@ import 'package:trial_exp_app/services/shared_pref_service.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:dio/dio.dart';
 import 'dart:typed_data';
+import 'package:trial_exp_app/services/url_params.dart';
 
 class User {
   final String filename;
@@ -79,7 +80,8 @@ class _UserInvoicesListState extends State<UserInvoicesListScreen> {
     try {
       final response = await http.post(
         Uri.parse(
-          'https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/fetch-user-invoices',
+          ApiUrl.getUserInvoiceListUrl
+          //'https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/fetch-user-invoices',
         ),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"user": await PrefService.getEmail()}),
@@ -343,7 +345,8 @@ class _UserInvoicesListState extends State<UserInvoicesListScreen> {
   Future<void> previewInvoice(BuildContext context, String filename) async {
     try {
       final response = await Dio().post(
-        'https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/preview-invoice',
+        ApiUrl.previewInvoiceUrl,
+        //'https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/preview-invoice',
         data: {'filename': filename},
         options: Options(responseType: ResponseType.bytes),
       );

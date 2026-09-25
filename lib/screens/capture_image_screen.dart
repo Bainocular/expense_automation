@@ -10,6 +10,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:trial_exp_app/services/shared_pref_service.dart';
+import 'package:trial_exp_app/services/url_params.dart';
 
 class DocumentCaptureScreen extends StatefulWidget {
   const DocumentCaptureScreen({Key? key}) : super(key: key);
@@ -28,8 +29,8 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
   bool _isEditing = false;
   bool _isProcessing = false;
 
-  final String saveApiUrl =
-      "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/save-invoices";
+  final String saveApiUrl = ApiUrl.saveInvoiceUrl;
+      //"http://34.63.210.75:3006/save-invoices";
 
   Map<String, dynamic>? _apiResponse;
 
@@ -48,13 +49,14 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _costController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
+  final TextEditingController _dialogDateController = TextEditingController();
 
   // Future<void> uploadMultipleImages(List<XFile> images) async {
   Future<Map<String, dynamic>?> uploadMultipleImages(
     List<dynamic> images,
   ) async {
-    const String apiUrl =
-        "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/read-invoices";
+    const String apiUrl = ApiUrl.readInvoiceUrl;
+       // "http://34.63.210.75:3006/read-invoices";
 
     setState(() => _isProcessing = true);
     var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
@@ -91,6 +93,16 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
         final decode = json.decode(responseBody);
         final invoice = decode['result'][0];
 
+        final invoiceDate = DateTime.parse(invoice['date']);
+        final currentDate = DateTime.now();
+
+        //calculate the date exactly 3 months ago
+        final threeMonthAgo = DateTime(
+          currentDate.year,
+          currentDate.month - 3,
+          currentDate.day,
+        );
+
         setState(() {
           _apiResponse = invoice;
           _dateController.text = DateFormat(
@@ -99,7 +111,55 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
 
           _costController.text = invoice['discrepencyAmt'].toString();
           _categoryController.text = invoice['category'];
+          //_dialogDateController.text = _dateController.text;
         });
+
+        if (invoiceDate.isBefore(threeMonthAgo)) {
+          await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Invoice Date Warning'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "The invoice date appears to be more than 3 months old. Please verify and update the date if necessary before saving.",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    TextField(
+                      controller: _dateController,
+                      keyboardType: TextInputType.datetime,
+                      decoration: const InputDecoration(
+                        labelText: 'Invoice Date',
+                        hintText: 'MM/dd/yyyy',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ],
+                ),
+
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('continue'),
+                  ),
+                ],
+              );
+            },
+          );
+
+          //_dateController.text = _dialogDateController.text;
+
+          //_dialogDateController.dispose();
+        }
         return jsonDecode(responseBody);
       } else {
         print("Upload failed");
@@ -146,6 +206,47 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
     updatedInvoice['discrepencyAmt'] =
         double.tryParse(_costController.text) ?? 0;
     updatedInvoice['category'] = _categoryController.text;
+
+    final invoiceDate = DateFormat('MM/dd/yyyy').parse(updatedInvoice['date']);
+    final currentDateTime = DateTime.now();
+
+     final currentDate = DateTime(
+          currentDateTime.year,
+          currentDateTime.month,
+          currentDateTime.day,
+        );
+
+    if (invoiceDate.isAfter(currentDate)) {  
+      setState(() => _isSaving = false);
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Invalid Invoice Date"),
+            content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                       "The invoice date is in the future. "
+                        "Please verify and correct the date before saving.",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+                 actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+          );
+        }
+      );
+      return;
+    }
 
     final body = {
       "user": email_address,

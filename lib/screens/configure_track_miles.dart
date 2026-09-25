@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:trial_exp_app/services/url_params.dart';
 
 class ConfigureMilesScreen extends StatefulWidget {
   const ConfigureMilesScreen({Key? key}) : super(key: key);
@@ -15,8 +16,8 @@ class _ConfigureMilesScreenState extends State<ConfigureMilesScreen> {
   DateTime? fromDate;
   DateTime? toDate;
 
-  final String apiUrl =
-      "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/configure-miles";
+  final String apiUrl = ApiUrl.configureTrackMilesCostUrl;
+      //"http://34.63.210.75:3006/configure-miles";
 
   final DateFormat requestDateFormat = DateFormat('yyyy-MM-dd');
 

@@ -13,6 +13,10 @@ import 'package:trial_exp_app/screens/user_invoices_list_screen.dart';
 import 'package:trial_exp_app/services/shared_pref_service.dart';
 import 'package:trial_exp_app/screens/dashboard_screen.dart';
 import 'package:trial_exp_app/screens/admin_shell.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:trial_exp_app/services/url_params.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -51,7 +55,34 @@ class _HomeScreenState extends State<HomeScreen> {
   loadPrefs() async {
     // await PrefService.saveEmail(_emailController.text.trim());
     String? email = await PrefService.getEmail();
-    String? client = await PrefService.getClient();
+    String? client;
+    String? _loginSelectedClient = await PrefService.getClient();
+    final response = await http.post(
+      //Uri.parse("http://34.63.210.75:3006/get-user-last-client"),
+      Uri.parse(ApiUrl.getUserLastClientUrl),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode({
+        "user": email
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final result = json.decode(response.body);
+      final String? client_name = result['client_name'];
+
+        if (clientName == null || client_name != _loginSelectedClient)  {
+          print('Client name is None');
+          client = await PrefService.getClient();
+        } else {
+          
+          print('Client name: $clientName');
+          client = client_name;
+        }
+    }
+    else{
+      print('Failed to get client: ${response.statusCode}');
+      client = await PrefService.getClient();
+    }
     // SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       // username = prefs.getString("username") ?? "User";

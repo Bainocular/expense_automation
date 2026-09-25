@@ -6,6 +6,7 @@ import 'package:trial_exp_app/screens/home_screen.dart';
 
 import 'package:trial_exp_app/screens/trial_homepage.dart';
 import 'package:trial_exp_app/services/shared_pref_service.dart';
+import 'package:trial_exp_app/services/url_params.dart';
 
 class OTPLoginScreen extends StatefulWidget {
   const OTPLoginScreen({Key? key}) : super(key: key);
@@ -27,12 +28,12 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
   bool _showOtpField = false;
   String? _serverOtp;
   String _selectedUserRole = 'Consultant';
+  String? dropdownValue = "Monster Energy"; 
+  final String apiUrl = ApiUrl.authenticateUserUrl;
+      //"http://34.63.210.75:3006/authenticate-user";
 
-  final String apiUrl =
-      "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/authenticate-user";
-
-  final String registerUserUrl =
-      "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/register-user";
+  final String registerUserUrl = ApiUrl.registerUserUrl;
+      //"http://34.63.210.75:3006/register-user";
   // Email Regex
   bool isValidEmail(String email) {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
@@ -41,6 +42,15 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
   // Future<void> saveEmail(String email) async {
   //   final prefs = await SharedPreferences.getInstance();
   //   await prefs.setString('user_email', email);
+  // }
+  // @override
+  // void initState(){
+  //   super.initState();
+  //   loadDefaultClient();
+  // }
+
+  // loadDefaultClient() async{
+
   // }
 
   Future<void> submitEmail() async {
@@ -131,7 +141,8 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
       //final user;
       dynamic user;
       final userDataUrl = Uri.parse(
-        "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/get-users",
+        ApiUrl.getUserListUrl
+        //"http://34.63.210.75:3006/get-users",
       );
 
       final response = await http.post(
@@ -157,6 +168,30 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
       if (user != null) {
         print("Inside user not equal to null : ${user}");
         await PrefService.saveRole(user[5]);
+        String? client;
+
+        final response = await http.post(
+          //Uri.parse("http://34.63.210.75:3006/get-user-last-client"),
+          Uri.parse(ApiUrl.getUserLastClientUrl),
+          headers: {"Content-Type": "application/json"},
+          body: json.encode({
+            "user": _emailController.text.trim().toLowerCase()
+          }),
+        );
+
+        if(response.statusCode == 200){
+           final result = json.decode(response.body);
+           final String? clientName = result['client_name'];
+
+            if (clientName != null) {
+              setState((){
+                dropdownValue = clientName;
+              });
+              
+            }
+        }
+
+
       } else if (user == null) {
         print("Inside user equal to null : ${user}");
         showDialog(
@@ -213,7 +248,7 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
                   showDialog(
                     context: context,
                     builder: (context) {
-                      String? dropdownValue = "Monster Energy"; // default value
+                      //String? dropdownValue = "Monster Energy"; // default value
 
                       return AlertDialog(
                         shape: RoundedRectangleBorder(
@@ -337,7 +372,7 @@ class _OTPLoginScreenState extends State<OTPLoginScreen> {
       showDialog(
         context: context,
         builder: (context) {
-          String? dropdownValue = "Monster Energy"; // default value
+          //String? dropdownValue = "Monster Energy"; // default value
 
           return AlertDialog(
             shape: RoundedRectangleBorder(

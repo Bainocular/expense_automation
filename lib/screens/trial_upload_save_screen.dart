@@ -220,6 +220,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:trial_exp_app/services/shared_pref_service.dart';
+import 'package:trial_exp_app/services/url_params.dart';
 
 class UploadInvoiceScreen extends StatefulWidget {
   const UploadInvoiceScreen({Key? key}) : super(key: key);
@@ -244,10 +245,10 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
   final TextEditingController _costController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
 
-  final String uploadApiUrl =
-      "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/read-invoices";
-  final String saveApiUrl =
-      "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/save-invoices";
+  final String uploadApiUrl = ApiUrl.readInvoiceUrl;
+      //"http://34.63.210.75:3006/read-invoices";
+  final String saveApiUrl = ApiUrl.saveInvoiceUrl;
+      //"http://34.63.210.75:3006/save-invoices";
   String? _selectedCategory;
 
   /// PICK FILE
@@ -295,6 +296,16 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
       final decoded = json.decode(responseBody);
       final invoice = decoded['result'][0];
 
+      final invoiceDate = DateTime.parse(invoice['date']);
+      final currentDate = DateTime.now();
+
+      //calculate the date exactly 3 months ago
+      final threeMonthsAgo = DateTime(
+        currentDate.year,
+        currentDate.month - 3,
+        currentDate.day,
+      );
+
       setState(() {
         _apiResponse = invoice;
         _dateController.text = DateFormat(
@@ -303,6 +314,49 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
         _costController.text = invoice['discrepencyAmt'].toString();
         _categoryController.text = invoice['category'];
       });
+
+      if (invoiceDate.isBefore(threeMonthsAgo)) {
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Invoice Date Warning'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "The invoice date appears to be more than 3 months old. Please verify and update the date if necessary before saving.",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  TextField(
+                    controller: _dateController,
+                    keyboardType: TextInputType.datetime,
+                    decoration: const InputDecoration(
+                      labelText: 'Invoice Date',
+                      hintText: 'MM/dd/yyyy',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('continue'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 
@@ -340,6 +394,47 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
     updatedInvoice['discrepencyAmt'] =
         double.tryParse(_costController.text) ?? 0;
     updatedInvoice['category'] = _categoryController.text;
+
+    final invoiceDate = DateFormat('MM/dd/yyyy').parse(updatedInvoice['date']);
+    final currentDateTime = DateTime.now();
+    final currentDate = DateTime(
+          currentDateTime.year,
+          currentDateTime.month,
+          currentDateTime.day,
+        );
+
+     if (invoiceDate.isAfter(currentDate)) {  
+       setState(() => _isSaving = false);
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Invalid Invoice Date"),
+            content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                       "The invoice date is in the future. "
+                        "Please verify and correct the date before saving.",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+                 actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+          );
+        }
+      );
+      return;
+    }
+
     final body = {
       "user": email_address,
       "force_save": "false",

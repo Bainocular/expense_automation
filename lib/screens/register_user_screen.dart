@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:trial_exp_app/services/url_params.dart';
 
 class AddUserScreen extends StatefulWidget {
   const AddUserScreen({Key? key}) : super(key: key);
@@ -19,8 +20,8 @@ class _AddUserScreenState extends State<AddUserScreen> {
   bool isLoading = false;
 
   //Replace with your API URL
-  final String apiUrl =
-      "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/register-user";
+  final String apiUrl = ApiUrl.registerUserUrl;
+      //"http://34.63.210.75:3006/register-user";
 
   Future<void> addUser() async {
     if (!_formKey.currentState!.validate()) {

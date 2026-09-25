@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:trial_exp_app/services/shared_pref_service.dart';
+import 'package:trial_exp_app/services/url_params.dart';
 
 class MilesScreen extends StatefulWidget {
   const MilesScreen({super.key});
@@ -18,6 +19,7 @@ class _MilesScreenState extends State<MilesScreen> {
 
   DateTime selectedDate = DateTime.now();
   final TextEditingController milesController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
   bool isLoading = false;
 
@@ -53,6 +55,7 @@ class _MilesScreenState extends State<MilesScreen> {
         "user": email,
         "date": DateFormat('yyyy-MM-dd').format(selectedDate),
         "miles": double.parse(milesController.text),
+        "description": descriptionController.text,
         "customer": client,
       };
 
@@ -61,7 +64,8 @@ class _MilesScreenState extends State<MilesScreen> {
 
       final response = await http.post(
         Uri.parse(
-          "https://expense-tool-api-industrious-possum-lh.cfapps.us10-001.hana.ondemand.com/cost-miles",
+          ApiUrl.trackMilesUrl
+         // "http://34.63.210.75:3006/cost-miles",
         ),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(body),
@@ -213,6 +217,22 @@ class _MilesScreenState extends State<MilesScreen> {
                         ),
 
                         const SizedBox(height: 30),
+
+                         TextFormField(
+                          controller: descriptionController,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                         
+                          decoration: InputDecoration(
+                            labelText: "Description(Optional)",
+                            labelStyle: Theme.of(context).textTheme.bodyMedium,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                         
+                        ),
+
+                         const SizedBox(height: 30),
 
                         SizedBox(
                           width: double.infinity,
