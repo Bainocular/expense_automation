@@ -93,7 +93,14 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
         final decode = json.decode(responseBody);
         final invoice = decode['result'][0];
 
-        final invoiceDate = DateTime.parse(invoice['date']);
+        //final invoiceDate = DateTime.parse(invoice['date']);
+        final String? invoiceDateString = invoice['date']?.toString();
+
+        DateTime? invoiceDate;
+
+        if (invoiceDateString != null && invoiceDateString.trim().isNotEmpty) {
+          invoiceDate = DateTime.tryParse(invoiceDateString);
+        }
         final currentDate = DateTime.now();
 
         //calculate the date exactly 3 months ago
@@ -113,52 +120,53 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
           _categoryController.text = invoice['category'];
           //_dialogDateController.text = _dateController.text;
         });
-
-        if (invoiceDate.isBefore(threeMonthAgo)) {
-          await showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return AlertDialog(
-                title: Text('Invoice Date Warning'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "The invoice date appears to be more than 3 months old. Please verify and update the date if necessary before saving.",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    TextField(
-                      controller: _dateController,
-                      keyboardType: TextInputType.datetime,
-                      decoration: const InputDecoration(
-                        labelText: 'Invoice Date',
-                        hintText: 'MM/dd/yyyy',
-                        border: OutlineInputBorder(),
+        if (invoiceDate != null){
+          if (invoiceDate.isBefore(threeMonthAgo)) {
+            await showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('Invoice Date Warning'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "The invoice date appears to be more than 3 months old. Please verify and update the date if necessary before saving.",
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
+
+                      const SizedBox(height: 20),
+
+                      TextField(
+                        controller: _dateController,
+                        keyboardType: TextInputType.datetime,
+                        decoration: const InputDecoration(
+                          labelText: 'Invoice Date',
+                          hintText: 'MM/dd/yyyy',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('continue'),
                     ),
                   ],
-                ),
+                );
+              },
+            );
 
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('continue'),
-                  ),
-                ],
-              );
-            },
-          );
+            //_dateController.text = _dialogDateController.text;
 
-          //_dateController.text = _dialogDateController.text;
-
-          //_dialogDateController.dispose();
+            //_dialogDateController.dispose();
+          }
         }
         return jsonDecode(responseBody);
       } else {

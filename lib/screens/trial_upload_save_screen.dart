@@ -296,7 +296,16 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
       final decoded = json.decode(responseBody);
       final invoice = decoded['result'][0];
 
-      final invoiceDate = DateTime.parse(invoice['date']);
+      //final invoiceDate = DateTime.parse(invoice['date']);
+
+      final String? invoiceDateString = invoice['date']?.toString();
+
+      DateTime? invoiceDate;
+
+      if (invoiceDateString != null && invoiceDateString.trim().isNotEmpty) {
+        invoiceDate = DateTime.tryParse(invoiceDateString);
+      }
+
       final currentDate = DateTime.now();
 
       //calculate the date exactly 3 months ago
@@ -315,47 +324,49 @@ class _UploadInvoiceScreenState extends State<UploadInvoiceScreen> {
         _categoryController.text = invoice['category'];
       });
 
-      if (invoiceDate.isBefore(threeMonthsAgo)) {
-        await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Invoice Date Warning'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "The invoice date appears to be more than 3 months old. Please verify and update the date if necessary before saving.",
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  TextField(
-                    controller: _dateController,
-                    keyboardType: TextInputType.datetime,
-                    decoration: const InputDecoration(
-                      labelText: 'Invoice Date',
-                      hintText: 'MM/dd/yyyy',
-                      border: OutlineInputBorder(),
+      if(invoiceDate != null){
+        if (invoiceDate.isBefore(threeMonthsAgo)) {
+          await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Invoice Date Warning'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "The invoice date appears to be more than 3 months old. Please verify and update the date if necessary before saving.",
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
+
+                    const SizedBox(height: 20),
+
+                    TextField(
+                      controller: _dateController,
+                      keyboardType: TextInputType.datetime,
+                      decoration: const InputDecoration(
+                        labelText: 'Invoice Date',
+                        hintText: 'MM/dd/yyyy',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ],
+                ),
+
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('continue'),
                   ),
                 ],
-              ),
-
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('continue'),
-                ),
-              ],
-            );
-          },
-        );
+              );
+            },
+          );
+        }
       }
     }
   }
